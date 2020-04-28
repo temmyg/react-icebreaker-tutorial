@@ -80,7 +80,7 @@ class Game extends React.Component {
   
   handleClick(gridIndex){
 	this.stepCount++;
-	let sc = this.stepCount;
+	let curStep = this.stepCount;
 	//this.currentStep = this.stepCount;
 	let nsqrs = this.state.histories[this.state.histories.length-1].squares.slice();
     nsqrs[gridIndex] = this.isXSign ? 'X' : 'O';
@@ -88,7 +88,7 @@ class Game extends React.Component {
 	
 	this.setState({ currentStep: this.stepCount })
 	this.setState({ histories: this.state.histories.concat([{squares : nsqrs}]) });
-	this.setState({ moves: this.state.moves.concat([<li key={this.stepCount}><button onClick={() => this.jumpTo(sc)}>Go to move #{this.stepCount}</button></li>])});	
+	this.setState({ moves: this.state.moves.concat([<li key={this.stepCount}><button onClick={() => this.jumpTo(curStep)}>Go to move #{this.stepCount}</button></li>])});	
  }
   
   render() {
