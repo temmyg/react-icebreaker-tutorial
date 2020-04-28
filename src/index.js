@@ -23,28 +23,17 @@ class Board extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-		histories: [ { squares: Array(9).fill(null) } ],
-		currentIndex: 0
+		//histories: [ { squares: Array(9).fill(null) } ],
+		//currentIndex: 0
 		//squares: Array(9).fill(null) 
 	};
     this.total = 0;
   }
+  
   renderSquare(i) {
     this.idx = i;
-    return <Square value={this.state.histories[this.state.currentIndex].squares[i]}
-				onClick={ () => this.handleClick(i) }
-           />;
-  }
-
-  handleClick(i){
-     this.total++;
-     // const nsqrs = this.state.squares.slice();
-	 const nsqrs = this.state.histories[this.total-1].squares.slice();
-     nsqrs[i] = this.total % 2 == 0 ? 'O' : 'X'; 
-     this.props.onClick(this.total);
-     // this.setState({squares: nsqrs});
-	 this.setState({ histories: this.state.histories.concat({squares: nsqrs}) });
-	 this.setState({ currentIndex : this.total });
+    return <Square value={this.props.squares[i]}
+				onClick={ () => this.props.onClick(i) } />;
   }
 
   render() {
@@ -74,27 +63,39 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  isXSign: Boolean = true;
+  stepCount: Number = 0;
+
   constructor(props){
     super(props);
-    this.state = { moves: [<li key={0}><button onClick={() => this.gotoPrev(0)}>Go to game start</button></li>] };
-	this.boardRef = React.createRef();
+    this.state = { histories: [{ squares: Array(9).fill(null)}], moves: [<li key={0}><button onClick={() => this.jumpTo(0)}>Go to game start</button></li>], currentStep: 0 };
+	//this.boardRef = React.createRef();
 	// this.state = { moves: ["Go to game start"] };
   }
-  addMoves(step){
-    let btntext = "Go to move #" + step;
-    const nmvs = this.state.moves.concat([<li key={step} onClick={ () => this.gotoPrev(step) }><button>{btntext}</button></li>]);
-	// const nmvs = this.state.moves.concat(["Go to move #" + step]);
-    this.setState({moves : nmvs}); 
+  
+  jumpTo(i){
+	console.log(i)
+	this.setState({ currentStep: i});  
   }
-  gotoPrev(step) {
-	 //debugger
-	 this.boardRef.current.setState({currentIndex: step});
-  }
+  
+  handleClick(gridIndex){
+	this.stepCount++;
+	let sc = this.stepCount;
+	//this.currentStep = this.stepCount;
+	let nsqrs = this.state.histories[this.state.histories.length-1].squares.slice();
+    nsqrs[gridIndex] = this.isXSign ? 'X' : 'O';
+    this.isXSign = !this.isXSign;
+	
+	this.setState({ currentStep: this.stepCount })
+	this.setState({ histories: this.state.histories.concat([{squares : nsqrs}]) });
+	this.setState({ moves: this.state.moves.concat([<li key={this.stepCount}><button onClick={() => this.jumpTo(sc)}>Go to move #{this.stepCount}</button></li>])});	
+ }
+  
   render() {
     return (
       <div className="game">
         <div className="game-board">
-          <Board onClick={ (step) => this.addMoves(step) } ref={ this.boardRef }/>
+          <Board squares={this.state.histories[this.state.currentStep].squares} onClick={(i) => this.handleClick(i)}/>
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
