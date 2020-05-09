@@ -10,10 +10,11 @@ class Square extends React.Component {
 
   render() {
     return (
-      <button className="square"
-              onClick={ () => this.props.onClick() }>
-          {this.props.value}
-      </button>
+	<button className="square"
+			  onClick={ () => this.props.onClick() }
+              onDoubleClick= { (event) => { console.log(this.props.attachedData.text); this.props.attachedData.sayHi(); } }>
+              {this.props.value}			  
+	</button>
     );
   }
 }
@@ -32,8 +33,26 @@ class Board extends React.Component {
   
   renderSquare(i) {
     this.idx = i;
-    return <Square value={this.props.squares[i]}
-				onClick={ () => this.props.onClick(i) } />;
+	var greeting = { text: 'hello', font: 'red' }
+	greeting.sayHi = function() {
+		alert('hi, master!')
+	}
+	/*return <Square value={this.props.squares[i]} attachedData={ greeting: greeting }
+				onClick={ () => this.props.onClick(i) }>
+									
+			</Square>;
+	   // the above <button> markup should have "onClick= { (event) => console.log(this.props.attachedData.greeting.text) }" instead
+	*/
+	   
+    /* return <Square value={this.props.squares[i]} attachedData={ greeting }
+				onClick={ () => this.props.onClick(i) }>
+					{ /* <div>12</div> */ /* }					
+			</Square>; 
+	*/
+	return <Square value={this.props.squares[i]} attachedData={ { ...greeting } }
+				onClick={ () => this.props.onClick(i) }>
+					{ /* <div>12</div> */ }					
+			</Square>;
   }
 
   render() {
